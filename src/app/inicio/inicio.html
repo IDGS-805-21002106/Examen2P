@@ -1,0 +1,20 @@
+<div class="inicio-container">
+  <div class="banner">
+    <img src="../../assets/img/banner2.png" alt="Banner de Promoción">
+    <h2>Las mejores historias</h2>
+    <p>Leer es saber</p>
+  </div>
+
+  <div class="featured-products">
+    <div class="destacar">
+      <h2>Libros Destacados</h2>
+    </div>
+    
+    <div class="product-card" *ngFor="let producto of productosDestacados">
+      <img [src]="producto.imagen || 'https://via.placeholder.com/200?text=No+Image'" [alt]="producto.nombre">
+      <h3>{{ producto.nombre }}</h3>
+      <p>{{ producto.descripcion }}</p>
+      <span class="price">${{ producto.precio | number : '1.2-2' }}</span>
+    </div>
+    </div>
+</div>

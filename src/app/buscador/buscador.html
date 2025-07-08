@@ -1,0 +1,27 @@
+<div class="search-filter-container">
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Buscar productos..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+    >
+    <button (click)="onSearch()">Buscar</button>
+  </div>
+
+  <div class="category-filter">
+    <label>Categoría:</label>
+    <div class="category-options">
+      <label *ngFor="let category of categories" class="category-checkbox">
+        <input
+          type="radio"
+          name="productCategory"
+          [value]="category"
+          [(ngModel)]="selectedCategory"
+          (change)="onCategoryChange()"
+        >
+        {{ category | titlecase }}
+      </label>
+    </div>
+  </div>
+</div>

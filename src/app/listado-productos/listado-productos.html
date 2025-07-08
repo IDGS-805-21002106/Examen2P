@@ -1,0 +1,22 @@
+<div class="product-gallery-container">
+  <app-buscador
+    [categories]="categories"
+    [initialSearchTerm]="searchTerm"
+    [initialSelectedCategory]="selectedCategory"
+    (searchFilterChange)="onSearchFilterChange($event)"
+  ></app-buscador>
+
+  <div class="product-grid">
+    <div class="product-card" *ngFor="let producto of filteredProducts">
+      <img [src]="producto.imagen || 'https://via.placeholder.com/200?text=No+Image'" [alt]="producto.nombre">
+      <div class="product-info">
+        <h3>{{ producto.nombre }}</h3>
+        <p>{{ producto.descripcion }}</p>
+        <span class="price">{{ producto.precio | currency:'USD':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+    <div *ngIf="!filteredProducts || filteredProducts.length === 0" class="no-products-message">
+      <p>No se encontraron productos que coincidan con tu búsqueda</p>
+    </div>
+  </div>
+</div>
