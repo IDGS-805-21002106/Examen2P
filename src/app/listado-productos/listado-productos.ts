@@ -1,11 +1,8 @@
-
 import { Component, OnInit } from '@angular/core';
-
-
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, distinctUntilChanged } from 'rxjs/operators';
 
 import { IProducto } from '../interfaces/producto';
 import { Buscador } from '../buscador/buscador';
@@ -32,8 +29,7 @@ export class ListadoProductos implements OnInit {
   selectedCategory: string = 'all';
   private selectedCategorySubject = new BehaviorSubject<string>('all');
 
-
-  categories: string[] = ['all', 'Novela', 'Fantasía', 'Ciencia Ficción', 'Historia'];
+  categories: string[] = ['all'];
 
   constructor(private _productosService: ProductosService) { }
 
@@ -46,6 +42,8 @@ export class ListadoProductos implements OnInit {
     this._productosService.getListaProductos().subscribe({
       next: (data) => {
         this.allProducts = data;
+        this.extractUniqueCategories();
+
         this.searchTermSubject.next(this.searchTerm);
         this.selectedCategorySubject.next(this.selectedCategory);
       },
@@ -54,6 +52,26 @@ export class ListadoProductos implements OnInit {
       }
     });
   }
+
+  
+  private extractUniqueCategories(): void {
+    const uniqueCategories = new Set<string>();
+    const desiredCategories = ['novela', 'fantasía', 'ciencia ficción', 'historia']; 
+
+    this.allProducts.forEach(product => {
+      if (product.categoria) {
+        const lowerCaseCategory = product.categoria.toLowerCase();
+        
+        if (desiredCategories.includes(lowerCaseCategory)) {
+          uniqueCategories.add(product.categoria); 
+        }
+      }
+    });
+    this.categories = ['all', ...Array.from(uniqueCategories).sort()];
+
+  
+  }
+
 
   private setupFiltering(): void {
     combineLatest([
@@ -68,7 +86,7 @@ export class ListadoProductos implements OnInit {
 
         if (selectedCategory !== 'all') {
           tempFiltered = tempFiltered.filter(product =>
-            this.matchProductToCategory(product.nombre, product.descripcion, selectedCategory)
+            product.categoria?.toLowerCase() === selectedCategory.toLowerCase()
           );
         }
         return tempFiltered;
@@ -85,36 +103,5 @@ export class ListadoProductos implements OnInit {
     this.selectedCategorySubject.next(this.selectedCategory);
   }
 
-
-  private matchProductToCategory(productName: string | undefined, productDescription: string | undefined, category: string): boolean {
-    if (!productName && !productDescription) return false;
-
-    const lowerCaseName = productName ? productName.toLowerCase() : '';
-    const lowerCaseDescription = productDescription ? productDescription.toLowerCase() : '';
-
-
-    switch (category.toLowerCase()) {
-      case 'novela':
-        return lowerCaseDescription.includes('novela') || lowerCaseName.includes('novela') ||
-               lowerCaseDescription.includes('thriller') || lowerCaseName.includes('thriller') ||
-               lowerCaseDescription.includes('romance') || lowerCaseName.includes('romance');
-      case 'fantasía':
-        return lowerCaseDescription.includes('fantasía') || lowerCaseName.includes('fantasía') ||
-               lowerCaseDescription.includes('magia') || lowerCaseName.includes('magia') ||
-               lowerCaseDescription.includes('dragones') || lowerCaseName.includes('dragones') ||
-               lowerCaseDescription.includes('elfos') || lowerCaseName.includes('elfos');
-      case 'ciencia ficción':
-        return lowerCaseDescription.includes('ciencia ficción') || lowerCaseName.includes('ciencia ficción') ||
-               lowerCaseDescription.includes('futuro') || lowerCaseName.includes('futuro') ||
-               lowerCaseDescription.includes('robot') || lowerCaseName.includes('robot') ||
-               lowerCaseDescription.includes('espacio') || lowerCaseName.includes('espacio');
-      case 'historia':
-        return lowerCaseDescription.includes('historia') || lowerCaseName.includes('historia') ||
-               lowerCaseDescription.includes('biografía') || lowerCaseName.includes('biografía') ||
-               lowerCaseDescription.includes('guerra') || lowerCaseName.includes('guerra') ||
-               lowerCaseDescription.includes('antiguo') || lowerCaseName.includes('antiguo');
-      default:
-        return true; 
-    }
-  }
+  
 }

@@ -1,5 +1,4 @@
-// src/app/buscador/buscador.ts
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core'; // Asegúrate de importar OnInit
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -10,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './buscador.html',
   styleUrls: ['./buscador.css']
 })
-export class Buscador implements OnInit { // Implementa OnInit si no lo haces ya
+export class Buscador implements OnInit { 
   @Input() categories: string[] = [];
   @Input() initialSearchTerm: string = '';
   @Input() initialSelectedCategory: string = 'all';
@@ -20,8 +19,6 @@ export class Buscador implements OnInit { // Implementa OnInit si no lo haces ya
   searchTerm: string = '';
   selectedCategory: string = 'all';
 
-  // ngOnInit es importante para que los valores iniciales de los @Input se asignen
-  // a las propiedades internas searchTerm y selectedCategory cuando el componente se inicializa.
   ngOnInit(): void {
     this.searchTerm = this.initialSearchTerm;
     this.selectedCategory = this.initialSelectedCategory;
@@ -32,7 +29,6 @@ export class Buscador implements OnInit { // Implementa OnInit si no lo haces ya
   }
 
   onCategoryChange(): void {
-    // Cuando la categoría cambia (al seleccionar un radio), emitimos el evento.
     this.searchFilterChange.emit({ searchTerm: this.searchTerm, category: this.selectedCategory });
   }
 }
